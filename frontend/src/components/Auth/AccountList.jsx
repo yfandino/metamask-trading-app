@@ -11,12 +11,14 @@ import {
 } from "@material-ui/core";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../lib/authContext";
+import { AppContext } from "../../lib/appContext";
 import useMetamask from "../../lib/useMetamask";
 import DialogWithAction from "../common/DialogWithAction";
 
 export default function AccountList() {
   const { web3 } = useMetamask();
   const { accounts } = useContext(AuthContext);
+  const { setSignature } = useContext(AppContext);
   const [message, setMessage] = useState("");
   const [selected, setSelected] = useState();
   const [error, setError] = useState();
@@ -24,7 +26,7 @@ export default function AccountList() {
   async function sign() {
     try {
       const response = await web3.eth.personal.sign(message, selected, 'test');
-      console.log(response);
+      setSignature(response);
     } catch (e) {
       console.error(e);
       setError(e.message);
