@@ -1,12 +1,21 @@
 const { Router } = require('express');
+const auth = require('../utils/auth');
+const { getBalances, deposit } = require("../utils/utils.balances");
 
 const router = Router();
 
 const ALLOWED_TOKENS = ["ETH", "USDT", "DVF"];
 
-router.get('/', async (req, res) => {
+router.use(auth.checkSignature);
+
+router.get('/', async (req, res, next) => {
   console.log("GET /balance/");
-  res.send({ message: "OK" });
+  try {
+    const balances = getBalances();
+    res.send({ message: "OK", balances });
+  } catch (e) {
+    next(e);
+  }
 });
 
 router.post('/deposit', async (req, res) => {
@@ -23,7 +32,9 @@ router.post('/deposit', async (req, res) => {
       .send({ message: "Token is missing or your trying with wrong token" });
   }
 
-  res.send({ message: "OK" });
+  const balances = deposit(amount, token);
+
+  res.send({ message: "OK", balances });
 });
 
 module.exports = router;

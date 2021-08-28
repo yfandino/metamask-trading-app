@@ -12,11 +12,12 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use("/api/v0", router);
+
 router.use(function(err, req, res, next) {
   console.error(JSON.stringify(err, null, 2));
-  res.status(err.status || 500).json(err);
+  res.status(err.status || 500)
+    .send({ message: err.message || "Internal Server Error" });
 });
-
-app.use("/api/v0", router);
 
 module.exports = app;
