@@ -7,31 +7,38 @@ import {
   Grid,
   List,
   ListItem,
-  ListSubheader, TextField
+  ListSubheader,
+  Typography
 } from "@material-ui/core";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../lib/authContext";
 import { AppContext } from "../../lib/appContext";
 import useMetamask from "../../lib/useMetamask";
-import DialogWithAction from "../common/DialogWithAction";
+import { useEffect } from "react";
 
 export default function AccountList() {
   const { web3 } = useMetamask();
   const { accounts } = useContext(AuthContext);
   const { setSignature } = useContext(AppContext);
-  const [message, setMessage] = useState("");
   const [selected, setSelected] = useState();
   const [error, setError] = useState();
 
-  async function sign() {
-    try {
-      const response = await web3.eth.personal.sign(message, selected, 'test');
-      setSignature(response);
-    } catch (e) {
-      console.error(e);
-      setError(e.message);
+  useEffect(() => {
+    if (!selected) return;
+
+    async function sign() {
+      try {
+        // TO-DO Get message secret from server
+        const response = await web3.eth.personal.sign("TEST_SECRET", selected);
+        setSignature(response);
+        console.log(response)
+      } catch (e) {
+        console.error(e);
+        setError(e.message);
+      }
     }
-  }
+    sign();
+  }, [selected, setSignature, web3]);
 
   return (
     <Grid>
@@ -42,7 +49,16 @@ export default function AccountList() {
           <ListItem key={account}>
             <Card>
               <CardHeader title={`Account ${i + 1}`} />
-              <CardContent>{account}</CardContent>
+              <CardContent>
+                {account}
+                {selected === account && (
+                  <Typography
+                    style={{ color: "red", fontWeight: "bold", fontSize: "0.8rem" }}
+                  >
+                    {error}
+                  </Typography>
+                )}
+              </CardContent>
               <CardActions>
                 <Button onClick={() => setSelected(account)}>Select</Button>
               </CardActions>
@@ -50,21 +66,6 @@ export default function AccountList() {
           </ListItem>
         ))}
       </List>
-      <DialogWithAction
-        open={!!selected}
-        title={`Selected account ${selected}`}
-        content={
-            <TextField
-            label="Message"
-            fullWidth
-            onChange={(e) => setMessage(e.target.value)}
-            value={message}
-          />
-        }
-        buttonLabel="Send"
-        onClick={sign}
-        errorMessage={error}
-      />
     </Grid>
   );
 }

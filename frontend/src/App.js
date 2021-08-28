@@ -8,7 +8,7 @@ function App() {
 
   return (
     <AppProvider value={{ signature, setSignature }}>
-      {signature ? <Auth /> : <TradingView />}
+      {signature ? <TradingView /> : <Auth />}
     </AppProvider>
   );
 }
