@@ -19,8 +19,7 @@ import { useEffect } from "react";
 export default function AccountList() {
   const { web3 } = useMetamask();
   const { accounts } = useContext(AuthContext);
-  const { setSignature } = useContext(AppContext);
-  const [selected, setSelected] = useState();
+  const { account: selected, setSignature, setAccount } = useContext(AppContext);
   const [error, setError] = useState();
 
   useEffect(() => {
@@ -31,7 +30,6 @@ export default function AccountList() {
         // TO-DO Get message secret from server
         const response = await web3.eth.personal.sign("TEST_SECRET", selected);
         setSignature(response);
-        console.log(response)
       } catch (e) {
         console.error(e);
         setError(e.message);
@@ -60,7 +58,7 @@ export default function AccountList() {
                 )}
               </CardContent>
               <CardActions>
-                <Button onClick={() => setSelected(account)}>Select</Button>
+                <Button onClick={() => setAccount(account)}>Select</Button>
               </CardActions>
             </Card>
           </ListItem>

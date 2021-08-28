@@ -2,7 +2,9 @@ import { createContext } from 'react';
 
 export const AppContext = createContext({
   signature: {},
-  setSignature: () => {}
+  setSignature: () => {},
+  account: {},
+  setAccount: () => {}
 })
 
 const AppProvider = ({ children, value }) => (
