@@ -2,6 +2,7 @@ const ethUtil = require("ethereumjs-util");
 const SECRET = 'TEST_SECRET';
 
 module.exports.checkSignature = async (req, res, next) => {
+  console.log("Checking auth...");
   const signature = req.headers["x-auth-signature"];
   const wallet = req.headers["x-auth-wallet"];
 
